@@ -1,12 +1,49 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import List from './Components/List';
+import Question from './Components/question';
+import Video from './Components/Player';
+
+
+const App = () => {
+    const [listofstudents, setlistofstudents] =  useState([]);
+    const [listofquestions, setlistofquestions] = useState([]);
+    const [namea,setnamea] = useState("null");
+    useEffect(() => {
+        axios.get('http://localhost:3000/candidates').then((res)=>{
+            setlistofstudents(res.data);
+        }).catch((e)=>{
+            console.log(e);
+        })
+        axios.get('http://localhost:3000/questions').then((res)=>{
+            setlistofquestions(res.data);
+        });
+    },[namea]);
+
+    const clickdesiredvideo = (name:any) =>{
+        setnamea(name)
+   }
+
+
+    return(
+        console.log(namea),
+        <div className="First">
+            <div></div>
+            <div>
+            <List list={listofstudents} handeling={clickdesiredvideo}/>
+            </div>
+            <div>
+            <Question questionabc={listofquestions} state={namea}/>
+            <Video  state={namea}/>  
+            </div>
+            <div></div>
+        </div>
+    )
+}
+
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+
